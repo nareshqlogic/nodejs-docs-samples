@@ -16,25 +16,25 @@
 /* eslint no-empty: 0 */
 'use strict';
 
-const {Storage} = require(`@google-cloud/storage`);
+const {Storage} = require('@google-cloud/storage');
 const storage = new Storage();
-const test = require(`ava`);
-const tools = require(`@google-cloud/nodejs-repo-tools`);
-const uuid = require(`uuid`);
+const assert = require('assert');
+const tools = require('@google-cloud/nodejs-repo-tools');
+const uuid = require('uuid');
 
-const program = require(`../transfer`);
+const program = require('../transfer');
 
 const firstBucketName = `nodejs-docs-samples-test-${uuid.v4()}`;
 const secondBucketName = `nodejs-docs-samples-test-${uuid.v4()}`;
 
 let jobName;
-const date = `2222/08/11`;
-const time = `15:30`;
-const description = `this is a test`;
-const status = `DISABLED`;
+const date = '2222/08/11';
+const time = '15:30';
+const description = 'this is a test';
+const status = 'DISABLED';
 
-test.before(tools.checkCredentials);
-test.before(async () => {
+before(async () => {
+  tools.checkCredentials();
   tools.stubConsole();
 
   const bucketOptions = {
@@ -51,7 +51,7 @@ test.before(async () => {
   });
 });
 
-test.after.always(async () => {
+after(async () => {
   tools.restoreConsole();
   const bucketOne = storage.bucket(firstBucketName);
   const bucketTwo = storage.bucket(secondBucketName);
@@ -75,7 +75,7 @@ test.after.always(async () => {
   } catch (err) {} // ignore error
 });
 
-test.cb.serial(`should create a storage transfer job`, t => {
+it('should create a storage transfer job', async () => {
   const options = {
     srcBucket: firstBucketName,
     destBucket: secondBucketName,
@@ -84,66 +84,76 @@ test.cb.serial(`should create a storage transfer job`, t => {
     description: description,
   };
 
-  program.createTransferJob(options, (err, transferJob) => {
-    t.ifError(err);
+  await program.createTransferJob(options, (err, transferJob) => {
+    assert.ifError(err);
     jobName = transferJob.name;
-    t.is(transferJob.name.indexOf(`transferJobs/`), 0);
-    t.is(transferJob.description, description);
-    t.is(transferJob.status, `ENABLED`);
-    t.true(
-      console.log.calledWith(`Created transfer job: %s`, transferJob.name)
+    assert.strictEqual(transferJob.name.indexOf('transferJobs/'), 0);
+    assert.strictEqual(transferJob.description, description);
+    assert.strictEqual(transferJob.status, 'ENABLED');
+    assert.strictEqual(
+      console.log.calledWith('Created transfer job: %s', transferJob.name),
+      true
     );
-    setTimeout(t.end, 2000);
   });
 });
 
-test.cb.serial(`should get a transferJob`, t => {
-  program.getTransferJob(jobName, (err, transferJob) => {
-    t.ifError(err);
-    t.is(transferJob.name, jobName);
-    t.is(transferJob.description, description);
-    t.is(transferJob.status, `ENABLED`);
-    t.true(console.log.calledWith(`Found transfer job: %s`, transferJob.name));
-    setTimeout(t.end, 2000);
+it('should get a transferJob', async () => {
+  await program.getTransferJob(jobName, (err, transferJob) => {
+    assert.ifError(err);
+    assert.strictEqual(transferJob.name, jobName);
+    assert.strictEqual(transferJob.description, description);
+    assert.strictEqual(transferJob.status, 'ENABLED');
+    assert.strictEqual(
+      console.log.calledWith('Found transfer job: %s', transferJob.name),
+      true
+    );
   });
 });
 
-test.cb.serial(`should update a transferJob`, t => {
+it('should update a transferJob', async () => {
   var options = {
     job: jobName,
-    field: `status`,
+    field: 'status',
     value: status,
   };
 
-  program.updateTransferJob(options, (err, transferJob) => {
-    t.ifError(err);
-    t.is(transferJob.name, jobName);
-    t.is(transferJob.description, description);
-    t.is(transferJob.status, status);
-    t.true(
-      console.log.calledWith(`Updated transfer job: %s`, transferJob.name)
+  await program.updateTransferJob(options, (err, transferJob) => {
+    assert.ifError(err);
+    assert.strictEqual(transferJob.name, jobName);
+    assert.strictEqual(transferJob.description, description);
+    assert.strictEqual(transferJob.status, status);
+    assert.strictEqual(
+      console.log.calledWith('Updated transfer job: %s', transferJob.name),
+      true
     );
-    setTimeout(t.end, 2000);
   });
 });
 
-test.cb.serial(`should list transferJobs`, t => {
-  program.listTransferJobs((err, transferJobs) => {
-    t.ifError(err);
-    t.true(transferJobs.some(transferJob => transferJob.name === jobName));
-    t.true(
-      transferJobs.some(transferJob => transferJob.description === description)
+it('should list transferJobs', async () => {
+  await program.listTransferJobs((err, transferJobs) => {
+    assert.ifError(err);
+    assert.strictEqual(
+      transferJobs.some(transferJob => transferJob.name === jobName),
+      true
     );
-    t.true(transferJobs.some(transferJob => transferJob.status === status));
-    t.true(console.log.calledWith(`Found %d jobs!`, transferJobs.length));
-    setTimeout(t.end, 2000);
+    assert.strictEqual(
+      transferJobs.some(transferJob => transferJob.description === description),
+      true
+    );
+    assert.strictEqual(
+      transferJobs.some(transferJob => transferJob.status === status),
+      true
+    );
+    assert.strictEqual(
+      console.log.calledWith('Found %d jobs!', transferJobs.length),
+      true
+    );
   });
 });
 
-test.cb.serial(`should list transferJobs`, t => {
-  program.listTransferOperations(jobName, (err, operations) => {
-    t.ifError(err);
-    t.true(Array.isArray(operations));
-    t.end();
+it('should list transferJobs', async () => {
+  await program.listTransferOperations(jobName, (err, operations) => {
+    assert.ifError(err);
+    assert.strictEqual(Array.isArray(operations), true);
   });
 });
