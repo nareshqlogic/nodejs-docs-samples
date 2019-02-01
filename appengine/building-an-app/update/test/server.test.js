@@ -13,48 +13,50 @@
 
 'use strict';
 
-const path = require('path');
-const assert = require('assert');
-const utils = require('@google-cloud/nodejs-repo-tools');
+const path = require(`path`);
+const test = require(`ava`);
+const utils = require(`@google-cloud/nodejs-repo-tools`);
 
-const cwd = path.join(__dirname, '../');
+const cwd = path.join(__dirname, `../`);
 const requestObj = utils.getRequest({
   cwd: cwd,
-  cmd: 'server',
+  cmd: `server`,
 });
 
-beforeEach(utils.stubConsole);
-afterEach(utils.restoreConsole);
+test.beforeEach(utils.stubConsole);
+test.afterEach.always(utils.restoreConsole);
 
-it('should send greetings', async () => {
-  await requestObj
-    .get('/')
+test.cb.serial(`should send greetings`, t => {
+  requestObj
+    .get(`/`)
     .expect(200)
     .expect(response => {
-      assert.strictEqual(response.text, 'Hello from App Engine!');
-    });
+      t.is(response.text, `Hello from App Engine!`);
+    })
+    .end(t.end);
 });
 
-it('should display form', async () => {
-  await requestObj
-    .get('/submit')
+test.cb.serial(`should display form`, t => {
+  requestObj
+    .get(`/submit`)
     .expect(200)
     .expect(response => {
-      assert.strictEqual(
-        response.text.includes('textarea name="message" placeholder="Message"'),
-        true
+      t.true(
+        response.text.includes('textarea name="message" placeholder="Message"')
       );
-    });
+    })
+    .end(t.end);
 });
 
-it('should record message', async () => {
-  await requestObj
-    .post('/submit', {
-      name: 'sample-user',
-      message: 'sample-message',
+test.cb.serial(`should record message`, t => {
+  requestObj
+    .post(`/submit`, {
+      name: `sample-user`,
+      message: `sample-message`,
     })
     .expect(200)
     .expect(response => {
-      assert.strictEqual(response.text, 'Thanks for your message!');
-    });
+      t.is(response.text, `Thanks for your message!`);
+    })
+    .end(t.end);
 });
