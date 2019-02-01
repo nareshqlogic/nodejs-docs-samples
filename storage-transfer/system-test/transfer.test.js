@@ -41,14 +41,10 @@ before(async () => {
     entity: 'allUsers',
     role: storage.acl.WRITER_ROLE,
   };
-  await storage.createBucket(firstBucketName).then(data => {
-    const bucket = data[0];
-    return bucket.acl.add(bucketOptions);
-  });
-  await storage.createBucket(secondBucketName).then(data => {
-    const bucket = data[0];
-    return bucket.acl.add(bucketOptions);
-  });
+  const [bucket1] = await storage.createBucket(firstBucketName);
+  bucket1.acl.add(bucketOptions);
+  const [bucket2] = await storage.createBucket(secondBucketName);
+  bucket2.acl.add(bucketOptions);
 });
 
 after(async () => {
@@ -56,22 +52,22 @@ after(async () => {
   const bucketOne = storage.bucket(firstBucketName);
   const bucketTwo = storage.bucket(secondBucketName);
   try {
-    bucketOne.deleteFiles({force: true});
+    await bucketOne.deleteFiles({force: true});
   } catch (err) {} // ignore error
   try {
-    bucketOne.deleteFiles({force: true});
+    await bucketOne.deleteFiles({force: true});
   } catch (err) {} // ignore error
   try {
-    bucketOne.delete();
+    await bucketOne.delete();
   } catch (err) {} // ignore error
   try {
-    bucketTwo.deleteFiles({force: true});
+    await bucketTwo.deleteFiles({force: true});
   } catch (err) {} // ignore error
   try {
-    bucketTwo.deleteFiles({force: true});
+    await bucketTwo.deleteFiles({force: true});
   } catch (err) {} // ignore error
   try {
-    bucketTwo.delete();
+    await bucketTwo.delete();
   } catch (err) {} // ignore error
 });
 
@@ -84,30 +80,30 @@ it('should create a storage transfer job', async () => {
     description: description,
   };
 
-  await program.createTransferJob(options, (err, transferJob) => {
+  program.createTransferJob(options, (err, transferJob) => {
     assert.ifError(err);
     jobName = transferJob.name;
     assert.strictEqual(transferJob.name.indexOf('transferJobs/'), 0);
     assert.strictEqual(transferJob.description, description);
     assert.strictEqual(transferJob.status, 'ENABLED');
-    assert.strictEqual(
-      console.log.calledWith('Created transfer job: %s', transferJob.name),
-      true
+    assert.ok(
+      console.log.calledWith('Created transfer job: %s', transferJob.name)
     );
   });
+  await new Promise(r => setTimeout(r, 2000));
 });
 
 it('should get a transferJob', async () => {
-  await program.getTransferJob(jobName, (err, transferJob) => {
+  program.getTransferJob(jobName, (err, transferJob) => {
     assert.ifError(err);
     assert.strictEqual(transferJob.name, jobName);
     assert.strictEqual(transferJob.description, description);
     assert.strictEqual(transferJob.status, 'ENABLED');
-    assert.strictEqual(
-      console.log.calledWith('Found transfer job: %s', transferJob.name),
-      true
+    assert.ok(
+      console.log.calledWith('Found transfer job: %s', transferJob.name)
     );
   });
+  await new Promise(r => setTimeout(r, 2000));
 });
 
 it('should update a transferJob', async () => {
@@ -117,43 +113,34 @@ it('should update a transferJob', async () => {
     value: status,
   };
 
-  await program.updateTransferJob(options, (err, transferJob) => {
+  program.updateTransferJob(options, (err, transferJob) => {
     assert.ifError(err);
     assert.strictEqual(transferJob.name, jobName);
     assert.strictEqual(transferJob.description, description);
     assert.strictEqual(transferJob.status, status);
-    assert.strictEqual(
-      console.log.calledWith('Updated transfer job: %s', transferJob.name),
-      true
+    assert.ok(
+      console.log.calledWith('Updated transfer job: %s', transferJob.name)
     );
   });
+  await new Promise(r => setTimeout(r, 2000));
 });
 
 it('should list transferJobs', async () => {
-  await program.listTransferJobs((err, transferJobs) => {
+  program.listTransferJobs((err, transferJobs) => {
     assert.ifError(err);
-    assert.strictEqual(
-      transferJobs.some(transferJob => transferJob.name === jobName),
-      true
+    assert.ok(transferJobs.some(transferJob => transferJob.name === jobName));
+    assert.ok(
+      transferJobs.some(transferJob => transferJob.description === description)
     );
-    assert.strictEqual(
-      transferJobs.some(transferJob => transferJob.description === description),
-      true
-    );
-    assert.strictEqual(
-      transferJobs.some(transferJob => transferJob.status === status),
-      true
-    );
-    assert.strictEqual(
-      console.log.calledWith('Found %d jobs!', transferJobs.length),
-      true
-    );
+    assert.ok(transferJobs.some(transferJob => transferJob.status === status));
+    assert.ok(console.log.calledWith('Found %d jobs!', transferJobs.length));
   });
+  await new Promise(r => setTimeout(r, 2000));
 });
 
-it('should list transferJobs', async () => {
-  await program.listTransferOperations(jobName, (err, operations) => {
+it('should list transferJobs', () => {
+  program.listTransferOperations(jobName, (err, operations) => {
     assert.ifError(err);
-    assert.strictEqual(Array.isArray(operations), true);
+    assert.ok(Array.isArray(operations));
   });
 });

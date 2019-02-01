@@ -95,21 +95,18 @@ it('should create a transfer job', () => {
 
   sample.program.createTransferJob(options, callback);
 
-  assert.strictEqual(
-    sample.mocks.storagetransfer.transferJobs.create.calledOnce,
-    true
-  );
+  assert.ok(sample.mocks.storagetransfer.transferJobs.create.calledOnce);
   assert.strictEqual(
     sample.mocks.storagetransfer.transferJobs.create.firstCall.args[0].resource
       .description,
     undefined
   );
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [
     null,
     sample.mocks.transferJob,
   ]);
-  assert.strictEqual(console.log.calledOnce, true);
+  assert.ok(console.log.calledOnce);
   assert.deepStrictEqual(console.log.firstCall.args, [
     'Created transfer job: %s',
     sample.mocks.transferJob.name,
@@ -118,21 +115,18 @@ it('should create a transfer job', () => {
   options.description = description;
   sample.program.createTransferJob(options, callback);
 
-  assert.strictEqual(
-    sample.mocks.storagetransfer.transferJobs.create.calledTwice,
-    true
-  );
+  assert.ok(sample.mocks.storagetransfer.transferJobs.create.calledTwice);
   assert.strictEqual(
     sample.mocks.storagetransfer.transferJobs.create.secondCall.args[0].resource
       .description,
     description
   );
-  assert.strictEqual(callback.calledTwice, true);
+  assert.ok(callback.calledTwice);
   assert.deepStrictEqual(callback.secondCall.args, [
     null,
     sample.mocks.transferJob,
   ]);
-  assert.strictEqual(console.log.calledTwice, true);
+  assert.ok(console.log.calledTwice);
   assert.deepStrictEqual(console.log.secondCall.args, [
     'Created transfer job: %s',
     sample.mocks.transferJob.name,
@@ -147,7 +141,7 @@ it('should handle auth error', () => {
 
   sample.program.createTransferJob({}, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -159,7 +153,7 @@ it('should handle create error', () => {
 
   sample.program.createTransferJob({}, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -169,10 +163,7 @@ it('should get a transfer job', () => {
 
   sample.program.getTransferJob(jobName, callback);
 
-  assert.strictEqual(
-    sample.mocks.storagetransfer.transferJobs.get.calledOnce,
-    true
-  );
+  assert.ok(sample.mocks.storagetransfer.transferJobs.get.calledOnce);
   assert.deepStrictEqual(
     sample.mocks.storagetransfer.transferJobs.get.firstCall.args.slice(0, -1),
     [
@@ -183,12 +174,12 @@ it('should get a transfer job', () => {
       },
     ]
   );
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [
     null,
     sample.mocks.transferJob,
   ]);
-  assert.strictEqual(console.log.calledOnce, true);
+  assert.ok(console.log.calledOnce);
   assert.deepStrictEqual(console.log.firstCall.args, [
     'Found transfer job: %s',
     sample.mocks.transferJob.name,
@@ -203,7 +194,7 @@ it('should handle auth error', () => {
 
   sample.program.getTransferJob(jobName, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -215,7 +206,7 @@ it('should handle get error', () => {
 
   sample.program.getTransferJob(jobName, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -230,10 +221,7 @@ it('should update a transfer job', () => {
 
   sample.program.updateTransferJob(options, callback);
 
-  assert.strictEqual(
-    sample.mocks.storagetransfer.transferJobs.patch.calledOnce,
-    true
-  );
+  assert.ok(sample.mocks.storagetransfer.transferJobs.patch.calledOnce);
   assert.deepStrictEqual(
     sample.mocks.storagetransfer.transferJobs.patch.firstCall.args.slice(0, -1),
     [
@@ -251,12 +239,12 @@ it('should update a transfer job', () => {
       },
     ]
   );
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [
     null,
     sample.mocks.transferJob,
   ]);
-  assert.strictEqual(console.log.calledOnce, true);
+  assert.ok(console.log.calledOnce);
   assert.deepStrictEqual(console.log.firstCall.args, [
     'Updated transfer job: %s',
     jobName,
@@ -267,10 +255,7 @@ it('should update a transfer job', () => {
 
   sample.program.updateTransferJob(options, callback);
 
-  assert.strictEqual(
-    sample.mocks.storagetransfer.transferJobs.patch.calledTwice,
-    true
-  );
+  assert.ok(sample.mocks.storagetransfer.transferJobs.patch.calledTwice);
   assert.deepStrictEqual(
     sample.mocks.storagetransfer.transferJobs.patch.secondCall.args.slice(
       0,
@@ -291,12 +276,12 @@ it('should update a transfer job', () => {
       },
     ]
   );
-  assert.strictEqual(callback.calledTwice, true);
+  assert.ok(callback.calledTwice);
   assert.deepStrictEqual(callback.secondCall.args, [
     null,
     sample.mocks.transferJob,
   ]);
-  assert.strictEqual(console.log.calledTwice, true);
+  assert.ok(console.log.calledTwice);
   assert.deepStrictEqual(console.log.secondCall.args, [
     'Updated transfer job: %s',
     jobName,
@@ -307,10 +292,7 @@ it('should update a transfer job', () => {
 
   sample.program.updateTransferJob(options, callback);
 
-  assert.strictEqual(
-    sample.mocks.storagetransfer.transferJobs.patch.calledThrice,
-    true
-  );
+  assert.ok(sample.mocks.storagetransfer.transferJobs.patch.calledThrice);
   assert.deepStrictEqual(
     sample.mocks.storagetransfer.transferJobs.patch.thirdCall.args.slice(0, -1),
     [
@@ -328,12 +310,12 @@ it('should update a transfer job', () => {
       },
     ]
   );
-  assert.strictEqual(callback.calledThrice, true);
+  assert.ok(callback.calledThrice);
   assert.deepStrictEqual(callback.thirdCall.args, [
     null,
     sample.mocks.transferJob,
   ]);
-  assert.strictEqual(console.log.calledThrice, true);
+  assert.ok(console.log.calledThrice);
   assert.deepStrictEqual(console.log.thirdCall.args, [
     'Updated transfer job: %s',
     jobName,
@@ -353,7 +335,7 @@ it('should handle auth error', () => {
 
   sample.program.updateTransferJob(options, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -370,7 +352,7 @@ it('should handle patch error', () => {
 
   sample.program.updateTransferJob(options, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -380,10 +362,7 @@ it('should list transfer jobs', () => {
 
   sample.program.listTransferJobs(callback);
 
-  assert.strictEqual(
-    sample.mocks.storagetransfer.transferJobs.list.calledOnce,
-    true
-  );
+  assert.ok(sample.mocks.storagetransfer.transferJobs.list.calledOnce);
   assert.deepStrictEqual(
     sample.mocks.storagetransfer.transferJobs.list.firstCall.args.slice(0, -1),
     [
@@ -393,21 +372,18 @@ it('should list transfer jobs', () => {
       },
     ]
   );
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [
     null,
     [sample.mocks.transferJob],
   ]);
-  assert.strictEqual(console.log.calledOnce, true);
+  assert.ok(console.log.calledOnce);
   assert.deepStrictEqual(console.log.firstCall.args, ['Found %d jobs!', 1]);
 
   sample.mocks.storagetransfer.transferJobs.list.yields(null, {});
   sample.program.listTransferJobs(callback);
 
-  assert.strictEqual(
-    sample.mocks.storagetransfer.transferJobs.list.calledTwice,
-    true
-  );
+  assert.ok(sample.mocks.storagetransfer.transferJobs.list.calledTwice);
   assert.deepStrictEqual(
     sample.mocks.storagetransfer.transferJobs.list.secondCall.args.slice(0, -1),
     [
@@ -417,9 +393,9 @@ it('should list transfer jobs', () => {
       },
     ]
   );
-  assert.strictEqual(callback.calledTwice, true);
+  assert.ok(callback.calledTwice);
   assert.deepStrictEqual(callback.secondCall.args, [null, []]);
-  assert.strictEqual(console.log.calledOnce, true);
+  assert.ok(console.log.calledOnce);
 });
 
 it('should handle auth error', () => {
@@ -430,7 +406,7 @@ it('should handle auth error', () => {
 
   sample.program.listTransferJobs(callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -442,7 +418,7 @@ it('should handle list error', () => {
 
   sample.program.listTransferJobs(callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -453,7 +429,7 @@ it('should list transfer operations', () => {
   // Test that all operations get listed
   sample.program.listTransferOperations(undefined, callback);
 
-  assert.strictEqual(
+  assert.ok(
     sample.mocks.storagetransfer.transferOperations.list.calledOnce,
     true
   );
@@ -470,12 +446,12 @@ it('should list transfer operations', () => {
       },
     ]
   );
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [
     null,
     [sample.mocks.transferOperation],
   ]);
-  assert.strictEqual(console.log.calledOnce, true);
+  assert.ok(console.log.calledOnce);
   assert.deepStrictEqual(console.log.firstCall.args, [
     'Found %d operations!',
     1,
@@ -484,7 +460,7 @@ it('should list transfer operations', () => {
   // Test that operations for a specific job get listed
   sample.program.listTransferOperations(jobName, callback);
 
-  assert.strictEqual(
+  assert.ok(
     sample.mocks.storagetransfer.transferOperations.list.calledTwice,
     true
   );
@@ -504,12 +480,12 @@ it('should list transfer operations', () => {
       },
     ]
   );
-  assert.strictEqual(callback.calledTwice, true);
+  assert.ok(callback.calledTwice);
   assert.deepStrictEqual(callback.secondCall.args, [
     null,
     [sample.mocks.transferOperation],
   ]);
-  assert.strictEqual(console.log.calledTwice, true);
+  assert.ok(console.log.calledTwice);
   assert.deepStrictEqual(console.log.secondCall.args, [
     'Found %d operations!',
     1,
@@ -519,7 +495,7 @@ it('should list transfer operations', () => {
   sample.mocks.storagetransfer.transferOperations.list.yields(null, {});
   sample.program.listTransferOperations(jobName, callback);
 
-  assert.strictEqual(
+  assert.ok(
     sample.mocks.storagetransfer.transferOperations.list.calledThrice,
     true
   );
@@ -539,9 +515,9 @@ it('should list transfer operations', () => {
       },
     ]
   );
-  assert.strictEqual(callback.calledThrice, true);
+  assert.ok(callback.calledThrice);
   assert.deepStrictEqual(callback.thirdCall.args, [null, []]);
-  assert.strictEqual(console.log.calledTwice, true);
+  assert.ok(console.log.calledTwice);
 });
 
 it('should handle auth error', () => {
@@ -552,7 +528,7 @@ it('should handle auth error', () => {
 
   sample.program.listTransferOperations(undefined, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -564,7 +540,7 @@ it('should handle list error', () => {
 
   sample.program.listTransferOperations(undefined, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -574,19 +550,19 @@ it('should get a transfer operation', () => {
 
   sample.program.getTransferOperation(transferOperationName, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.strictEqual(
     callback.firstCall.args.length,
     2,
     'callback received 2 arguments'
   );
   assert.ifError(callback.firstCall.args[0], 'callback did not receive error');
-  assert.strictEqual(
+  assert.ok(
     callback.firstCall.args[1] === sample.mocks.transferOperation,
     true
   );
 
-  assert.strictEqual(
+  assert.ok(
     sample.mocks.storagetransfer.transferOperations.get.calledOnce,
     true
   );
@@ -602,12 +578,12 @@ it('should get a transfer operation', () => {
       },
     ]
   );
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [
     null,
     sample.mocks.transferOperation,
   ]);
-  assert.strictEqual(console.log.calledOnce, true);
+  assert.ok(console.log.calledOnce);
   assert.deepStrictEqual(console.log.firstCall.args, [
     'Found transfer operation: %s',
     sample.mocks.transferOperation,
@@ -622,7 +598,7 @@ it('should handle auth error', () => {
 
   sample.program.getTransferOperation(jobName, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -634,7 +610,7 @@ it('should handle get error', () => {
 
   sample.program.getTransferOperation(jobName, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -644,7 +620,7 @@ it('should pause a transfer operation', () => {
 
   sample.program.pauseTransferOperation(transferOperationName, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.strictEqual(
     callback.firstCall.args.length,
     1,
@@ -652,7 +628,7 @@ it('should pause a transfer operation', () => {
   );
   assert.ifError(callback.firstCall.args[0], 'callback did not receive error');
 
-  assert.strictEqual(
+  assert.ok(
     sample.mocks.storagetransfer.transferOperations.pause.calledOnce,
     true
   );
@@ -668,9 +644,9 @@ it('should pause a transfer operation', () => {
       },
     ]
   );
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [null]);
-  assert.strictEqual(console.log.calledOnce, true);
+  assert.ok(console.log.calledOnce);
   assert.deepStrictEqual(console.log.firstCall.args, [
     'Paused transfer operation: %s',
     transferOperationName,
@@ -685,7 +661,7 @@ it('should handle auth error', () => {
 
   sample.program.pauseTransferOperation(jobName, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -697,7 +673,7 @@ it('should handle pause error', () => {
 
   sample.program.pauseTransferOperation(jobName, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -707,7 +683,7 @@ it('should resume a transfer operation', () => {
 
   sample.program.resumeTransferOperation(transferOperationName, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.strictEqual(
     callback.firstCall.args.length,
     1,
@@ -715,7 +691,7 @@ it('should resume a transfer operation', () => {
   );
   assert.ifError(callback.firstCall.args[0], 'callback did not receive error');
 
-  assert.strictEqual(
+  assert.ok(
     sample.mocks.storagetransfer.transferOperations.resume.calledOnce,
     true
   );
@@ -731,9 +707,9 @@ it('should resume a transfer operation', () => {
       },
     ]
   );
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [null]);
-  assert.strictEqual(console.log.calledOnce, true);
+  assert.ok(console.log.calledOnce);
   assert.deepStrictEqual(console.log.firstCall.args, [
     'Resumed transfer operation: %s',
     transferOperationName,
@@ -748,7 +724,7 @@ it('should handle auth error', () => {
 
   sample.program.resumeTransferOperation(jobName, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -760,7 +736,7 @@ it('should handle resume error', () => {
 
   sample.program.resumeTransferOperation(jobName, callback);
 
-  assert.strictEqual(callback.calledOnce, true);
+  assert.ok(callback.calledOnce);
   assert.deepStrictEqual(callback.firstCall.args, [error]);
 });
 
@@ -776,7 +752,7 @@ it('should call createTransferJob', () => {
     'time',
     'date',
   ]);
-  assert.strictEqual(program.createTransferJob.calledOnce, true);
+  assert.ok(program.createTransferJob.calledOnce);
   assert.deepStrictEqual(
     program.createTransferJob.firstCall.args.slice(0, -1),
     [
@@ -796,7 +772,7 @@ it('should call getTransferJob', () => {
 
   sinon.stub(program, 'getTransferJob');
   program.main(['jobs', 'get', jobName]);
-  assert.strictEqual(program.getTransferJob.calledOnce, true);
+  assert.ok(program.getTransferJob.calledOnce);
   assert.deepStrictEqual(program.getTransferJob.firstCall.args.slice(0, -1), [
     jobName,
   ]);
@@ -807,7 +783,7 @@ it('should call listTransferJobs', () => {
 
   sinon.stub(program, 'listTransferJobs');
   program.main(['jobs', 'list']);
-  assert.strictEqual(program.listTransferJobs.calledOnce, true);
+  assert.ok(program.listTransferJobs.calledOnce);
   assert.deepStrictEqual(
     program.listTransferJobs.firstCall.args.slice(0, -1),
     []
@@ -819,7 +795,7 @@ it('should call updateTransferJob', () => {
 
   sinon.stub(program, 'updateTransferJob');
   program.main(['jobs', 'set', jobName, 'status', 'DISABLED']);
-  assert.strictEqual(program.updateTransferJob.calledOnce, true);
+  assert.ok(program.updateTransferJob.calledOnce);
   assert.deepStrictEqual(
     program.updateTransferJob.firstCall.args.slice(0, -1),
     [
@@ -837,7 +813,7 @@ it('should call listTransferOperations', () => {
 
   sinon.stub(program, 'listTransferOperations');
   program.main(['operations', 'list']);
-  assert.strictEqual(program.listTransferOperations.calledOnce, true);
+  assert.ok(program.listTransferOperations.calledOnce);
   assert.deepStrictEqual(
     program.listTransferOperations.firstCall.args.slice(0, -1),
     [undefined]
@@ -849,7 +825,7 @@ it('should call listTransferOperations and filter', () => {
 
   sinon.stub(program, 'listTransferOperations');
   program.main(['operations', 'list', jobName]);
-  assert.strictEqual(program.listTransferOperations.calledOnce, true);
+  assert.ok(program.listTransferOperations.calledOnce);
   assert.deepStrictEqual(
     program.listTransferOperations.firstCall.args.slice(0, -1),
     [jobName]
@@ -861,7 +837,7 @@ it('should call getTransferOperation', () => {
 
   sinon.stub(program, 'getTransferOperation');
   program.main(['operations', 'get', transferOperationName]);
-  assert.strictEqual(program.getTransferOperation.calledOnce, true);
+  assert.ok(program.getTransferOperation.calledOnce);
   assert.deepStrictEqual(
     program.getTransferOperation.firstCall.args.slice(0, -1),
     [transferOperationName]
@@ -873,7 +849,7 @@ it('should call pauseTransferOperation', () => {
 
   sinon.stub(program, 'pauseTransferOperation');
   program.main(['operations', 'pause', transferOperationName]);
-  assert.strictEqual(program.pauseTransferOperation.calledOnce, true);
+  assert.ok(program.pauseTransferOperation.calledOnce);
   assert.deepStrictEqual(
     program.pauseTransferOperation.firstCall.args.slice(0, -1),
     [transferOperationName]
@@ -885,7 +861,7 @@ it('should call resumeTransferOperation', () => {
 
   sinon.stub(program, 'resumeTransferOperation');
   program.main(['operations', 'resume', transferOperationName]);
-  assert.strictEqual(program.resumeTransferOperation.calledOnce, true);
+  assert.ok(program.resumeTransferOperation.calledOnce);
   assert.deepStrictEqual(
     program.resumeTransferOperation.firstCall.args.slice(0, -1),
     [transferOperationName]
