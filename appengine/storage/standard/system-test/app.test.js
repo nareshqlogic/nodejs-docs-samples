@@ -27,11 +27,10 @@ const requestObj = utils.getRequest({cwd: cwd});
 
 before(async () => {
   utils.checkCredentials();
-  await bucket.create(bucket).then(() => {
-    return bucket.acl.add({
-      entity: 'allUsers',
-      role: Storage.acl.READER_ROLE,
-    });
+  await bucket.create(bucket);
+  bucket.acl.add({
+    entity: 'allUsers',
+    role: Storage.acl.READER_ROLE,
   });
 });
 after(async () => {
