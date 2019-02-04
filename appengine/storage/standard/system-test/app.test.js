@@ -16,7 +16,7 @@
 const path = require(`path`);
 const {Storage} = require(`@google-cloud/storage`);
 const storage = new Storage();
-const test = require(`ava`);
+const assert = require(`assert`);
 const utils = require(`@google-cloud/nodejs-repo-tools`);
 
 const bucketName = process.env.GCLOUD_STORAGE_BUCKET;
@@ -25,7 +25,7 @@ const bucket = storage.bucket(bucketName);
 const cwd = path.join(__dirname, `../`);
 const requestObj = utils.getRequest({cwd: cwd});
 
-test.before(async () => {
+before(async () => {
   utils.checkCredentials();
   await bucket.create(bucket).then(() => {
     return bucket.acl.add({
@@ -34,33 +34,34 @@ test.before(async () => {
     });
   });
 });
-test.after.always(async () => {
+after(async () => {
   try {
     await bucket.deleteFiles();
     await bucket.delete();
   } catch (err) {} // ignore error
 });
 
-test.cb.serial(`should load`, t => {
-  requestObj
+it('should load', async () => {
+  await requestObj
     .get(`/`)
     .expect(200)
     .expect(response => {
-      t.regex(response.text, /<input type="file" name="file">/);
-    })
-    .end(t.end);
+      assert.strictEqual(
+        new RegExp(/<input type="file" name="file">/).test(response.text),
+        true
+      );
+    });
 });
 
-test.cb.serial(`should upload a file`, t => {
-  requestObj
+it('should upload a file', async () => {
+  await requestObj
     .post(`/upload`)
     .attach(`file`, path.join(__dirname, `resources/test.txt`))
     .expect(200)
     .expect(response => {
-      t.is(
+      assert.strictEqual(
         response.text,
         `https://storage.googleapis.com/${bucketName}/test.txt`
       );
-    })
-    .end(t.end);
+    });
 });
