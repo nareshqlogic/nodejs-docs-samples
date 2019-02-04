@@ -40,8 +40,9 @@ it('should display form', async () => {
     .get('/submit')
     .expect(200)
     .expect(response => {
-      assert.ok(
-        response.text.includes('textarea name="message" placeholder="Message"')
+      assert.strictEqual(
+        response.text.includes('textarea name="message" placeholder="Message"'),
+        true
       );
     });
 });

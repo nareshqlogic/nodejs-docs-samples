@@ -70,15 +70,15 @@ it('should create a table', async () => {
     prompt: sample.mocks.prompt,
   });
 
-  assert.ok(sample.mocks.prompt.start.calledOnce);
-  assert.ok(sample.mocks.prompt.get.calledOnce);
+  assert.strictEqual(sample.mocks.prompt.start.calledOnce, true);
+  assert.strictEqual(sample.mocks.prompt.get.calledOnce, true);
   assert.deepStrictEqual(
     sample.mocks.prompt.get.firstCall.args[0],
     exampleConfig
   );
 
   await new Promise(r => setTimeout(r, 10));
-  assert.ok(sample.mocks.Knex.calledOnce);
+  assert.strictEqual(sample.mocks.Knex.calledOnce, true);
   assert.deepStrictEqual(sample.mocks.Knex.firstCall.args, [
     {
       client: 'mysql',
@@ -86,14 +86,14 @@ it('should create a table', async () => {
     },
   ]);
 
-  assert.ok(sample.mocks.knex.schema.createTable.calledOnce);
+  assert.strictEqual(sample.mocks.knex.schema.createTable.calledOnce, true);
   assert.strictEqual(
     sample.mocks.knex.schema.createTable.firstCall.args[0],
     'visits'
   );
 
-  assert.ok(console.log.calledWith(expectedResult));
-  assert.ok(sample.mocks.knex.destroy.calledOnce);
+  assert.strictEqual(console.log.calledWith(expectedResult), true);
+  assert.strictEqual(sample.mocks.knex.destroy.calledOnce, true);
 });
 
 it('should handle prompt error', async () => {
@@ -107,9 +107,9 @@ it('should handle prompt error', async () => {
   });
 
   await new Promise(r => setTimeout(r, 10));
-  assert.ok(console.error.calledOnce);
-  assert.ok(console.error.calledWith(error));
-  assert.ok(sample.mocks.Knex.notCalled);
+  assert.strictEqual(console.error.calledOnce, true);
+  assert.strictEqual(console.error.calledWith(error), true);
+  assert.strictEqual(sample.mocks.Knex.notCalled, true);
 });
 
 it('should handle knex creation error', async () => {
@@ -124,10 +124,10 @@ it('should handle knex creation error', async () => {
     prompt: sample.mocks.prompt,
   });
   await new Promise(r => setTimeout(r, 10));
-  assert.ok(console.error.calledOnce);
-  assert.ok(
+  assert.strictEqual(console.error.calledOnce, true);
+  assert.strictEqual(
     console.error.calledWith(`Failed to create 'visits' table:`, error),
     true
   );
-  assert.ok(sample.mocks.knex.destroy.calledOnce);
+  assert.strictEqual(sample.mocks.knex.destroy.calledOnce, true);
 });

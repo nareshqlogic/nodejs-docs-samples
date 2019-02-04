@@ -80,8 +80,8 @@ afterEach(tools.restoreConsole);
 it('should set up sample in Postgres', () => {
   const sample = getSample();
 
-  assert.ok(sample.mocks.express.calledOnce);
-  assert.ok(sample.mocks.Knex.calledOnce);
+  assert.strictEqual(sample.mocks.express.calledOnce, true);
+  assert.strictEqual(sample.mocks.Knex.calledOnce, true);
   assert.deepStrictEqual(sample.mocks.Knex.firstCall.args, [
     {
       client: 'mysql',
@@ -116,7 +116,7 @@ it('should handle insert error', async () => {
     .get('/')
     .expect(500)
     .expect(response => {
-      assert.ok(response.text.includes(expectedResult));
+      assert.strictEqual(response.text.includes(expectedResult), true);
     });
 });
 
@@ -130,6 +130,6 @@ it('should handle read error', async () => {
     .get('/')
     .expect(500)
     .expect(response => {
-      assert.ok(response.text.includes(expectedResult));
+      assert.strictEqual(response.text.includes(expectedResult), true);
     });
 });
