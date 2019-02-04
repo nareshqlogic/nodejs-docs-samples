@@ -12,9 +12,9 @@
     "node": ">=8"
   },
   "scripts": {
-    "unit-test": "repo-tools test run --cmd mocha test/*.test.js",
-    "system-test": "repo-tools test run --cmd mocha system-test/*.test.js",
-    "test": "npm run unit-test && npm run system-test"
+    "unit-test": "mocha test/*.test.js --timeout=60000",
+    "system-test": "mocha system-test/*.test.js --timeout=60000",
+    "test": "repo-tools test install --cmd=npm -- run unit-test && repo-tools test install --cmd=npm -- run system-test"
   },
   "dependencies": {
     "googleapis": "36.0.0",
