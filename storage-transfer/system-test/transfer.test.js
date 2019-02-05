@@ -71,7 +71,7 @@ after(async () => {
   } catch (err) {} // ignore error
 });
 
-it('should create a storage transfer job', async () => {
+it('should create a storage transfer job', done => {
   const options = {
     srcBucket: firstBucketName,
     destBucket: secondBucketName,
@@ -89,11 +89,11 @@ it('should create a storage transfer job', async () => {
     assert.ok(
       console.log.calledWith('Created transfer job: %s', transferJob.name)
     );
+    done();
   });
-  await new Promise(r => setTimeout(r, 2000));
 });
 
-it('should get a transferJob', async () => {
+it('should get a transferJob', done => {
   program.getTransferJob(jobName, (err, transferJob) => {
     assert.ifError(err);
     assert.strictEqual(transferJob.name, jobName);
@@ -102,11 +102,11 @@ it('should get a transferJob', async () => {
     assert.ok(
       console.log.calledWith('Found transfer job: %s', transferJob.name)
     );
+    done();
   });
-  await new Promise(r => setTimeout(r, 2000));
 });
 
-it('should update a transferJob', async () => {
+it('should update a transferJob', done => {
   var options = {
     job: jobName,
     field: 'status',
@@ -121,11 +121,11 @@ it('should update a transferJob', async () => {
     assert.ok(
       console.log.calledWith('Updated transfer job: %s', transferJob.name)
     );
+    done();
   });
-  await new Promise(r => setTimeout(r, 2000));
 });
 
-it('should list transferJobs', async () => {
+it('should list transferJobs', done => {
   program.listTransferJobs((err, transferJobs) => {
     assert.ifError(err);
     assert.ok(transferJobs.some(transferJob => transferJob.name === jobName));
@@ -134,13 +134,14 @@ it('should list transferJobs', async () => {
     );
     assert.ok(transferJobs.some(transferJob => transferJob.status === status));
     assert.ok(console.log.calledWith('Found %d jobs!', transferJobs.length));
+    done();
   });
-  await new Promise(r => setTimeout(r, 2000));
 });
 
-it('should list transferJobs', () => {
+it('should list transferJobs', done => {
   program.listTransferOperations(jobName, (err, operations) => {
     assert.ifError(err);
     assert.ok(Array.isArray(operations));
+    done();
   });
 });
