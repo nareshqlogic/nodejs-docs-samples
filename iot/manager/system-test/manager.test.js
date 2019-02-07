@@ -16,31 +16,31 @@
 'use strict';
 
 const iot = require('@google-cloud/iot');
-const path = require(`path`);
-const {PubSub} = require(`@google-cloud/pubsub`);
-const test = require(`ava`);
-const tools = require(`@google-cloud/nodejs-repo-tools`);
-const uuid = require(`uuid`);
+const path = require('path');
+const {PubSub} = require('@google-cloud/pubsub');
+const assert = require('assert');
+const tools = require('@google-cloud/nodejs-repo-tools');
+const uuid = require('uuid');
 
 const iotClient = new iot.v1.DeviceManagerClient();
 const pubSubClient = new PubSub();
 
-const topicName = `nodejs-iot-test-topic`;
-const registryName = `nodejs-iot-test-registry`;
+const topicName = 'nodejs-iot-test-topic';
+const registryName = 'nodejs-iot-test-registry';
 const region = 'us-central1';
 const projectId =
   process.env.GOOGLE_CLOUD_PROJECT || process.env.GCLOUD_PROJECT;
 
-const cmd = `node manager.js`;
-const cwd = path.join(__dirname, `..`);
-const installDeps = `npm install`;
+const cmd = 'node manager.js';
+const cwd = path.join(__dirname, '..');
+const installDeps = 'npm install';
 const rsaPublicCert = process.env.NODEJS_IOT_RSA_PUBLIC_CERT;
 const rsaPrivateKey = process.env.NODEJS_IOT_RSA_PRIVATE_KEY;
 const ecPublicKey = process.env.NODEJS_IOT_EC_PUBLIC_KEY;
 
-test.todo(tools.run(installDeps, `${cwd}/../mqtt_example`));
-test.before(tools.checkCredentials);
-test.before(async () => {
+assert.ok(tools.run(installDeps, `${cwd}/../mqtt_example`));
+before(async () => {
+  tools.checkCredentials();
   // Create a single topic to be used for testing.
   let createTopicRes = await pubSubClient.createTopic(topicName);
   let topic = createTopicRes[0];
@@ -61,7 +61,7 @@ test.before(async () => {
   await iotClient.createDeviceRegistry(createRegistryRequest);
 });
 
-test.after.always(async () => {
+after(async () => {
   await pubSubClient.topic(topicName).delete();
   console.log(`Topic ${topicName} deleted.`);
 
@@ -75,8 +75,8 @@ test.after.always(async () => {
   console.log('Deleted test registry.');
 });
 
-test(`should create and delete an unauthorized device`, async t => {
-  const localDevice = `test-device`;
+it('should create and delete an unauthorized device', async () => {
+  const localDevice = 'test-device';
   const localRegName = `${registryName}-unauth`;
   let output = await tools.runAsync(`${cmd} setupIotTopic ${topicName}`, cwd);
   output = await tools.runAsync(
@@ -87,17 +87,20 @@ test(`should create and delete an unauthorized device`, async t => {
     `${cmd} createUnauthDevice ${localDevice} ${localRegName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Created device`));
+  assert.strictEqual(new RegExp('Created device').test(output), true);
   output = await tools.runAsync(
     `${cmd} deleteDevice ${localDevice} ${localRegName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Successfully deleted device`));
+  assert.strictEqual(
+    new RegExp('Successfully deleted device').test(output),
+    true
+  );
   output = await tools.runAsync(`${cmd} deleteRegistry ${localRegName}`, cwd);
 });
 
-test(`should list configs for a device`, async t => {
-  const localDevice = `test-device-configs`;
+it('should list configs for a device', async () => {
+  const localDevice = 'test-device-configs';
   const localRegName = `${registryName}-unauth`;
   let output = await tools.runAsync(`${cmd} setupIotTopic ${topicName}`, cwd);
   output = await tools.runAsync(
@@ -108,22 +111,25 @@ test(`should list configs for a device`, async t => {
     `${cmd} createUnauthDevice ${localDevice} ${localRegName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Created device`));
+  assert.strictEqual(new RegExp('Created device').test(output), true);
   output = await tools.runAsync(
     `${cmd} getDeviceConfigs ${localDevice} ${localRegName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Configs`));
+  assert.strictEqual(new RegExp('Configs').test(output), true);
   output = await tools.runAsync(
     `${cmd} deleteDevice ${localDevice} ${localRegName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Successfully deleted device`));
+  assert.strictEqual(
+    new RegExp('Successfully deleted device').test(output),
+    true
+  );
   output = await tools.runAsync(`${cmd} deleteRegistry ${localRegName}`, cwd);
 });
 
-test(`should create and delete an RSA256 device`, async t => {
-  const localDevice = `test-rsa-device`;
+it('should create and delete an RSA256 device', async () => {
+  const localDevice = 'test-rsa-device';
   const localRegName = `${registryName}-rsa256`;
   let output = await tools.runAsync(`${cmd} setupIotTopic ${topicName}`, cwd);
   output = await tools.runAsync(
@@ -134,22 +140,25 @@ test(`should create and delete an RSA256 device`, async t => {
     `${cmd} createRsa256Device ${localDevice} ${localRegName} ${rsaPublicCert}`,
     cwd
   );
-  t.regex(output, new RegExp(`Created device`));
+  assert.strictEqual(new RegExp('Created device').test(output), true);
   output = await tools.runAsync(
     `${cmd} getDeviceState ${localDevice} ${localRegName}`,
     cwd
   );
-  t.regex(output, new RegExp(`State`));
+  assert.strictEqual(new RegExp('State').test(output), true);
   output = await tools.runAsync(
     `${cmd} deleteDevice ${localDevice} ${localRegName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Successfully deleted device`));
+  assert.strictEqual(
+    new RegExp('Successfully deleted device').test(output),
+    true
+  );
   output = await tools.runAsync(`${cmd} deleteRegistry ${localRegName}`, cwd);
 });
 
-test(`should create and delete an ES256 device`, async t => {
-  const localDevice = `test-es256-device`;
+it('should create and delete an ES256 device', async () => {
+  const localDevice = 'test-es256-device';
   const localRegName = `${registryName}-es256`;
   let output = await tools.runAsync(`${cmd} setupIotTopic ${topicName}`, cwd);
   output = await tools.runAsync(
@@ -160,22 +169,25 @@ test(`should create and delete an ES256 device`, async t => {
     `${cmd} createEs256Device ${localDevice} ${localRegName} ${ecPublicKey}`,
     cwd
   );
-  t.regex(output, new RegExp(`Created device`));
+  assert.strictEqual(new RegExp('Created device').test(output), true);
   output = await tools.runAsync(
     `${cmd} getDeviceState ${localDevice} ${localRegName}`,
     cwd
   );
-  t.regex(output, new RegExp(`State`));
+  assert.strictEqual(new RegExp('State').test(output), true);
   output = await tools.runAsync(
     `${cmd} deleteDevice ${localDevice} ${localRegName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Successfully deleted device`));
+  assert.strictEqual(
+    new RegExp('Successfully deleted device').test(output),
+    true
+  );
   output = await tools.runAsync(`${cmd} deleteRegistry ${localRegName}`, cwd);
 });
 
-test(`should patch an unauthorized device with RSA256`, async t => {
-  const localDevice = `patchme`;
+it('should patch an unauthorized device with RSA256', async () => {
+  const localDevice = 'patchme';
   const localRegName = `${registryName}-patchRSA`;
   let output = await tools.runAsync(`${cmd} setupIotTopic ${topicName}`, cwd);
   output = await tools.runAsync(
@@ -186,22 +198,25 @@ test(`should patch an unauthorized device with RSA256`, async t => {
     `${cmd} createUnauthDevice ${localDevice} ${localRegName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Created device`));
+  assert.strictEqual(new RegExp('Created device').test(output), true);
   output = await tools.runAsync(
     `${cmd} patchRsa256 ${localDevice} ${localRegName} ${rsaPublicCert}`,
     cwd
   );
-  t.regex(output, new RegExp(`Patched device:`));
+  assert.strictEqual(new RegExp('Patched device:').test(output), true);
   output = await tools.runAsync(
     `${cmd} deleteDevice ${localDevice} ${localRegName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Successfully deleted device`));
+  assert.strictEqual(
+    new RegExp('Successfully deleted device').test(output),
+    true
+  );
   output = await tools.runAsync(`${cmd} deleteRegistry ${localRegName}`, cwd);
 });
 
-test(`should patch an unauthorized device with ES256`, async t => {
-  const localDevice = `patchme`;
+it('should patch an unauthorized device with ES256', async () => {
+  const localDevice = 'patchme';
   const localRegName = `${registryName}-patchES`;
   let output = await tools.runAsync(`${cmd} setupIotTopic ${topicName}`, cwd);
   output = await tools.runAsync(
@@ -212,22 +227,25 @@ test(`should patch an unauthorized device with ES256`, async t => {
     `${cmd} createUnauthDevice ${localDevice} ${localRegName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Created device`));
+  assert.strictEqual(new RegExp('Created device').test(output), true);
   output = await tools.runAsync(
     `${cmd} patchEs256 ${localDevice} ${localRegName} ${ecPublicKey}`,
     cwd
   );
-  t.regex(output, new RegExp(`Patched device:`));
+  assert.strictEqual(new RegExp('Patched device:').test(output), true);
   output = await tools.runAsync(
     `${cmd} deleteDevice ${localDevice} ${localRegName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Successfully deleted device`));
+  assert.strictEqual(
+    new RegExp('Successfully deleted device').test(output),
+    true
+  );
   output = await tools.runAsync(`${cmd} deleteRegistry ${localRegName}`, cwd);
 });
 
-test(`should create and list devices`, async t => {
-  const localDevice = `test-device`;
+it('should create and list devices', async () => {
+  const localDevice = 'test-device';
   const localRegName = `${registryName}-list`;
   let output = await tools.runAsync(`${cmd} setupIotTopic ${topicName}`, cwd);
   output = await tools.runAsync(
@@ -238,20 +256,26 @@ test(`should create and list devices`, async t => {
     `${cmd} createUnauthDevice ${localDevice} ${localRegName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Created device`));
+  assert.strictEqual(new RegExp('Created device').test(output), true);
   output = await tools.runAsync(`${cmd} listDevices ${localRegName}`, cwd);
-  t.regex(output, /Current devices in registry:/);
-  t.regex(output, new RegExp(localDevice));
+  assert.strictEqual(
+    new RegExp(/Current devices in registry:/).test(output),
+    true
+  );
+  assert.strictEqual(new RegExp(localDevice).test(output), true);
   output = await tools.runAsync(
     `${cmd} deleteDevice ${localDevice} ${localRegName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Successfully deleted device`));
+  assert.strictEqual(
+    new RegExp('Successfully deleted device').test(output),
+    true
+  );
   output = await tools.runAsync(`${cmd} deleteRegistry ${localRegName}`, cwd);
 });
 
-test(`should create and get a device`, async t => {
-  const localDevice = `test-device`;
+it('should create and get a device', async () => {
+  const localDevice = 'test-device';
 
   await tools.runAsync(`${cmd} setupIotTopic ${topicName}`, cwd);
   await tools.runAsync(
@@ -262,22 +286,28 @@ test(`should create and get a device`, async t => {
     `${cmd} createUnauthDevice ${localDevice} ${registryName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Created device`));
+  assert.strictEqual(new RegExp('Created device').test(output), true);
   output = await tools.runAsync(
     `${cmd} getDevice ${localDevice} ${registryName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Found device: ${localDevice}`));
+  assert.strictEqual(
+    new RegExp(`Found device: ${localDevice}`).test(output),
+    true
+  );
   output = await tools.runAsync(
     `${cmd} deleteDevice ${localDevice} ${registryName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Successfully deleted device`));
+  assert.strictEqual(
+    new RegExp('Successfully deleted device').test(output),
+    true
+  );
 });
 
-test(`should create and get an iam policy`, async t => {
-  const localMember = `group:dpebot@google.com`;
-  const localRole = `roles/viewer`;
+it('should create and get an iam policy', async () => {
+  const localMember = 'group:dpebot@google.com';
+  const localRole = 'roles/viewer';
   const localRegName = `${registryName}-get`;
   let output = await tools.runAsync(`${cmd} setupIotTopic ${topicName}`, cwd);
   output = await tools.runAsync(
@@ -288,13 +318,13 @@ test(`should create and get an iam policy`, async t => {
     `${cmd} setIamPolicy ${localRegName} ${localMember} ${localRole}`,
     cwd
   );
-  t.regex(output, new RegExp(`ETAG`));
+  assert.strictEqual(new RegExp('ETAG').test(output), true);
   output = await tools.runAsync(`${cmd} getIamPolicy ${localRegName}`, cwd);
-  t.regex(output, new RegExp(`dpebot`));
+  assert.strictEqual(new RegExp('dpebot').test(output), true);
   output = await tools.runAsync(`${cmd} deleteRegistry ${localRegName}`, cwd);
 });
 
-test(`should create and delete a registry`, async t => {
+it('should create and delete a registry', async () => {
   let createRegistryId = registryName + 'create';
 
   let output = await tools.runAsync(`${cmd} setupIotTopic ${topicName}`, cwd);
@@ -302,16 +332,22 @@ test(`should create and delete a registry`, async t => {
     `${cmd} createRegistry ${createRegistryId} ${topicName}`,
     cwd
   );
-  t.regex(output, new RegExp(`Successfully created registry`));
+  assert.strictEqual(
+    new RegExp('Successfully created registry').test(output),
+    true
+  );
   output = await tools.runAsync(
     `${cmd} deleteRegistry ${createRegistryId}`,
     cwd
   );
-  t.regex(output, new RegExp(`Successfully deleted registry`));
+  assert.strictEqual(
+    new RegExp('Successfully deleted registry').test(output),
+    true
+  );
 });
 
-test(`should send command message to device`, async t => {
-  const deviceId = `test-device-command`;
+it('should send command message to device', async () => {
+  const deviceId = 'test-device-command';
   const registryId = `${registryName}-rsa256`;
   const commandMessage = 'rotate 180 degrees';
 
@@ -331,27 +367,27 @@ test(`should send command message to device`, async t => {
     `${cmd} sendCommand ${deviceId} ${registryId} "${commandMessage}"`
   );
 
-  t.regex(output, new RegExp('Success: OK'));
+  assert.strictEqual(new RegExp('Success: OK').test(output), true);
 
   await tools.runAsync(`${cmd} deleteDevice ${deviceId} ${registryId}`, cwd);
   await tools.runAsync(`${cmd} deleteRegistry ${registryId}`, cwd);
 });
 
-test(`should create a new gateway`, async t => {
+it('should create a new gateway', async () => {
   const gatewayId = `nodejs-test-gateway-iot-${uuid.v4()}`;
   let gatewayOut = await tools.runAsync(
     `${cmd} createGateway ${registryName} ${gatewayId} RS256_X509_PEM ${rsaPublicCert}`
   );
 
   // test no error on create gateway.
-  t.regex(gatewayOut, new RegExp('Created device'));
+  assert.strictEqual(new RegExp('Created device').test(gatewayOut), true);
 
   await iotClient.deleteDevice({
     name: iotClient.devicePath(projectId, region, registryName, gatewayId),
   });
 });
 
-test(`should list gateways`, async t => {
+it('should list gateways', async () => {
   const gatewayId = `nodejs-test-gateway-iot-${uuid.v4()}`;
   await tools.runAsync(
     `${cmd} createGateway ${registryName} ${gatewayId} RS256_X509_PEM ${rsaPublicCert}`
@@ -359,14 +395,14 @@ test(`should list gateways`, async t => {
 
   // look for output in list gateway
   let gateways = await tools.runAsync(`${cmd} listGateways ${registryName}`);
-  t.regex(gateways, new RegExp(`${gatewayId}`));
+  assert.strictEqual(new RegExp(`${gatewayId}`).test(gateways), true);
 
   await iotClient.deleteDevice({
     name: iotClient.devicePath(projectId, region, registryName, gatewayId),
   });
 });
 
-test(`should bind existing device to gateway`, async t => {
+it('should bind existing device to gateway', async () => {
   const gatewayId = `nodejs-test-gateway-iot-${uuid.v4()}`;
   await tools.runAsync(
     `${cmd} createGateway ${registryName} ${gatewayId} RS256_X509_PEM ${rsaPublicCert}`
@@ -386,14 +422,20 @@ test(`should bind existing device to gateway`, async t => {
     `${cmd} bindDeviceToGateway ${registryName} ${gatewayId} ${deviceId}`
   );
 
-  t.regex(bind, new RegExp(`Binding device: ${deviceId}`));
-  t.notRegex(bind, new RegExp('Could not bind device'));
+  assert.strictEqual(
+    new RegExp(`Binding device: ${deviceId}`).test(bind),
+    true
+  );
+  assert.strictEqual(new RegExp('Could not bind device').test(bind), false);
 
   // test unbind
   let unbind = await tools.runAsync(
     `${cmd} unbindDeviceFromGateway ${registryName} ${gatewayId} ${deviceId}`
   );
-  t.regex(unbind, new RegExp(`Unbound ${deviceId} from ${gatewayId}`));
+  assert.strictEqual(
+    new RegExp(`Unbound ${deviceId} from ${gatewayId}`).test(unbind),
+    true
+  );
 
   await iotClient.deleteDevice({
     name: iotClient.devicePath(projectId, region, registryName, gatewayId),
@@ -404,7 +446,7 @@ test(`should bind existing device to gateway`, async t => {
   });
 });
 
-test(`should list devices bound to gateway`, async t => {
+it('should list devices bound to gateway', async () => {
   const gatewayId = `nodejs-test-gateway-iot-${uuid.v4()}`;
   await tools.runAsync(
     `${cmd} createGateway ${registryName} ${gatewayId} RS256_X509_PEM ${rsaPublicCert}`
@@ -426,8 +468,11 @@ test(`should list devices bound to gateway`, async t => {
     `${cmd} listDevicesForGateway ${registryName} ${gatewayId}`
   );
 
-  t.regex(devices, new RegExp(deviceId));
-  t.notRegex(devices, new RegExp('No devices bound to this gateway.'));
+  assert.strictEqual(new RegExp(deviceId).test(devices), true);
+  assert.strictEqual(
+    new RegExp('No devices bound to this gateway.').test(devices),
+    false
+  );
 
   // cleanup
   await tools.runAsync(
@@ -443,7 +488,7 @@ test(`should list devices bound to gateway`, async t => {
   });
 });
 
-test(`should list gateways for bound device`, async t => {
+it('should list gateways for bound device', async () => {
   const gatewayId = `nodejs-test-gateway-iot-${uuid.v4()}`;
   await tools.runAsync(
     `${cmd} createGateway ${registryName} ${gatewayId} RS256_X509_PEM ${rsaPublicCert}`
@@ -466,8 +511,11 @@ test(`should list gateways for bound device`, async t => {
     `${cmd} listGatewaysForDevice ${registryName} ${deviceId}`
   );
 
-  t.regex(devices, new RegExp(gatewayId));
-  t.notRegex(devices, new RegExp('No gateways associated with this device'));
+  assert.strictEqual(new RegExp(gatewayId).test(devices), true);
+  assert.strictEqual(
+    new RegExp('No gateways associated with this device').test(devices),
+    false
+  );
 
   // cleanup
   await tools.runAsync(
