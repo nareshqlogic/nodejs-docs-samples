@@ -175,7 +175,7 @@ it('should list devices bound to gateway', async () => {
   );
 
   assert.strictEqual(new RegExp(deviceId).test(devices), true);
-  assert.strictEqual(new RegExp('No devices bound').test(devices), false);// cleanup
+  assert.strictEqual(new RegExp('No devices bound').test(devices), false);
   // cleanup
   await tools.runAsync(
     `${cmd} unbindDeviceFromGateway ${registryName} ${gatewayId} ${deviceId}`
