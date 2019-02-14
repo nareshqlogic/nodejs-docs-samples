@@ -193,21 +193,18 @@ it.skip(`del: Doesn't fail when entity does not exist`, async () => {
 
 // TODO: ace-n Figure out why this test started failing
 it.skip(`del: Deletes an entity`, async () => {
-  await new Promise(resolve => {
-    request
-      .post(`/del`)
-      .send({
-        kind: KIND,
-        key: NAME,
-      })
-      .expect(200)
-      .expect(response => {
-        assert.strictEqual(response.text, `Entity ${KIND}/${NAME} deleted.`);
-      })
-      .end(resolve);
-  }).then(async () => {
-    const key = datastore.key([KIND, NAME]);
-    const [entity] = await datastore.get(key);
-    assert.ok(!entity);
-  });
+  await request
+    .post(`/del`)
+    .send({
+      kind: KIND,
+      key: NAME,
+    })
+    .expect(200)
+    .expect(response => {
+      assert.strictEqual(response.text, `Entity ${KIND}/${NAME} deleted.`);
+    });
+
+  const key = datastore.key([KIND, NAME]);
+  const [entity] = await datastore.get(key);
+  assert.ok(!entity);
 });

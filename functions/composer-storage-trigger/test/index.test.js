@@ -30,7 +30,7 @@ function getSample(FetchStub) {
   };
 }
 
-it('Handles error in JSON body', async () => {
+it('Handles error in JSON body', () => {
   const event = {
     data: {
       file: 'some-file',
@@ -43,12 +43,12 @@ it('Handles error in JSON body', async () => {
   };
   const sample = getSample(sinon.stub().resolves(body));
 
-  await sample.program.triggerDag(event).catch(function(err) {
+  sample.program.triggerDag(event).catch(function(err) {
     assert.strictEqual(new RegExp(/Something bad happened/).test(err), true);
   });
 });
 
-it('Handles error in IAP response.', async () => {
+it('Handles error in IAP response.', () => {
   const event = {
     data: {
       file: 'some-file',
@@ -81,7 +81,7 @@ it('Handles error in IAP response.', async () => {
     .resolves(makeIapPostRequestRes);
   const sample = getSample(FetchStub);
 
-  await sample.program.triggerDag(event).catch(function(err) {
+  sample.program.triggerDag(event).catch(function(err) {
     assert.strictEqual(err, expectedMsg);
   });
 });
