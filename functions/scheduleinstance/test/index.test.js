@@ -70,7 +70,7 @@ it('startInstancePubSub: should accept JSON-formatted event payload', async () =
   assert.strictEqual(data, 'request sent');
 });
 
-it(`startInstancePubSub: should fail with missing 'zone' attribute`, async () => {
+it(`startInstancePubSub: should fail with missing 'zone' attribute`, () => {
   const mocks = getMocks();
   const sample = getSample();
   const pubsubData = {instance: 'test-instance'};
@@ -85,7 +85,7 @@ it(`startInstancePubSub: should fail with missing 'zone' attribute`, async () =>
   );
 });
 
-it(`startInstancePubSub: should fail with missing 'instance' attribute`, async () => {
+it(`startInstancePubSub: should fail with missing 'instance' attribute`, () => {
   const mocks = getMocks();
   const sample = getSample();
   const pubsubData = {zone: 'test-zone'};
@@ -100,7 +100,7 @@ it(`startInstancePubSub: should fail with missing 'instance' attribute`, async (
   );
 });
 
-it('startInstancePubSub: should fail with empty event payload', async () => {
+it('startInstancePubSub: should fail with empty event payload', () => {
   const mocks = getMocks();
   const sample = getSample();
   const pubsubData = {};
@@ -131,7 +131,7 @@ it('stopInstancePubSub: should accept JSON-formatted event payload', async () =>
   assert.strictEqual(data, 'request sent');
 });
 
-it(`stopInstancePubSub: should fail with missing 'zone' attribute`, async () => {
+it(`stopInstancePubSub: should fail with missing 'zone' attribute`, () => {
   const mocks = getMocks();
   const sample = getSample();
   const pubsubData = {instance: 'test-instance'};
@@ -146,7 +146,7 @@ it(`stopInstancePubSub: should fail with missing 'zone' attribute`, async () => 
   );
 });
 
-it(`stopInstancePubSub: should fail with missing 'instance' attribute`, async () => {
+it(`stopInstancePubSub: should fail with missing 'instance' attribute`, () => {
   const mocks = getMocks();
   const sample = getSample();
   const pubsubData = {zone: 'test-zone'};
@@ -161,7 +161,7 @@ it(`stopInstancePubSub: should fail with missing 'instance' attribute`, async ()
   );
 });
 
-it('stopInstancePubSub: should fail with empty event payload', async () => {
+it('stopInstancePubSub: should fail with empty event payload', () => {
   const mocks = getMocks();
   const sample = getSample();
   const pubsubData = {};
