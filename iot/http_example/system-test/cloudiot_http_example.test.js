@@ -110,7 +110,7 @@ it('should send event message', async () => {
   await tools.runAsync(`${helper} deleteRegistry ${localRegName}`, cwd);
 });
 
-it('should send event messagei', async () => {
+it('should send event message', async () => {
   const localDevice = 'test-rsa-device';
   const localRegName = `${registryName}-rsa256`;
   await tools.runAsync(`${helper} setupIotTopic ${topicName}`, cwd);
