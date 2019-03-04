@@ -14,70 +14,70 @@
  */
 
 // [START functions_storage_integration_test]
-const childProcess = require(`child_process`);
-const test = require(`ava`);
-const uuid = require(`uuid`);
+const childProcess = require('child_process');
+const assert = require('assert');
+const uuid = require('uuid');
 
-test.serial(`helloGCS: should print uploaded message`, async t => {
-  t.plan(1);
+it('helloGCS: should print uploaded message', async () => {
   const startTime = new Date(Date.now()).toISOString();
   const filename = uuid.v4(); // Use a unique filename to avoid conflicts
 
   // Mock GCS call, as the emulator doesn't listen to GCS buckets
-  const data = JSON.stringify({
-    name: filename,
-    resourceState: 'exists',
-    metageneration: '1',
-  });
+  const data = JSON.stringify(
+    `{"name": "${filename}","resourceState": "exists","metageneration": "1"}`
+  );
 
-  childProcess.execSync(`functions-emulator call helloGCS --data '${data}'`);
+  childProcess.execSync(`functions-emulator call helloGCS --data ${data}`);
+
+  // Wait for logs to become consistent
+  await new Promise(resolve => setTimeout(resolve, 1000));
 
   // Check the emulator's logs
   const logs = childProcess
     .execSync(`functions-emulator logs read helloGCS --start-time ${startTime}`)
     .toString();
-  t.true(logs.includes(`File ${filename} uploaded.`));
+  assert.strictEqual(logs.includes(`File ${filename} uploaded.`), true);
 });
 
-test.serial(`helloGCS: should print metadata updated message`, async t => {
-  t.plan(1);
+it('helloGCS: should print metadata updated message', async () => {
   const startTime = new Date(Date.now()).toISOString();
   const filename = uuid.v4(); // Use a unique filename to avoid conflicts
 
   // Mock GCS call, as the emulator doesn't listen to GCS buckets
-  const data = JSON.stringify({
-    name: filename,
-    resourceState: 'exists',
-    metageneration: '2',
-  });
+  const data = JSON.stringify(
+    `{"name": "${filename}","resourceState": "exists","metageneration": "2"}`
+  );
 
-  childProcess.execSync(`functions-emulator call helloGCS --data '${data}'`);
+  childProcess.execSync(`functions-emulator call helloGCS --data ${data}`);
+
+  // Wait for logs to become consistent
+  await new Promise(resolve => setTimeout(resolve, 1000));
 
   // Check the emulator's logs
   const logs = childProcess
     .execSync(`functions-emulator logs read helloGCS --start-time ${startTime}`)
     .toString();
-  t.true(logs.includes(`File ${filename} metadata updated.`));
+  assert.strictEqual(logs.includes(`File ${filename} metadata updated.`), true);
 });
 
-test.serial(`helloGCS: should print deleted message`, async t => {
-  t.plan(1);
+it('helloGCS: should print deleted message', async () => {
   const startTime = new Date(Date.now()).toISOString();
   const filename = uuid.v4(); // Use a unique filename to avoid conflicts
 
   // Mock GCS call, as the emulator doesn't listen to GCS buckets
-  const data = JSON.stringify({
-    name: filename,
-    resourceState: 'not_exists',
-    metageneration: '3',
-  });
+  const data = JSON.stringify(
+    `{"name": "${filename}","resourceState": "not_exists","metageneration": "3"}`
+  );
 
-  childProcess.execSync(`functions-emulator call helloGCS --data '${data}'`);
+  childProcess.execSync(`functions-emulator call helloGCS --data ${data}`);
+
+  // Wait for logs to become consistent
+  await new Promise(resolve => setTimeout(resolve, 1000));
 
   // Check the emulator's logs
   const logs = childProcess
     .execSync(`functions-emulator logs read helloGCS --start-time ${startTime}`)
     .toString();
-  t.true(logs.includes(`File ${filename} deleted.`));
+  assert.strictEqual(logs.includes(`File ${filename} deleted.`), true);
 });
 // [END functions_storage_integration_test]

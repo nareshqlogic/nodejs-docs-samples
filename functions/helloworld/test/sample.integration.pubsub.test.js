@@ -14,38 +14,42 @@
  */
 
 // [START functions_pubsub_integration_test]
-const childProcess = require(`child_process`);
-const test = require(`ava`);
-const uuid = require(`uuid`);
+const childProcess = require('child_process');
+const assert = require('assert');
+const uuid = require('uuid');
 
-test.serial(`helloPubSub: should print a name`, async t => {
-  t.plan(1);
+it('helloPubSub: should print a name', async () => {
   const startTime = new Date(Date.now()).toISOString();
   const name = uuid.v4();
 
   // Mock Pub/Sub call, as the emulator doesn't listen to Pub/Sub topics
-  const encodedName = Buffer.from(name).toString(`base64`);
-  const data = JSON.stringify({data: encodedName});
-  childProcess.execSync(`functions call helloPubSub --data '${data}'`);
+  const encodedName = Buffer.from(name).toString('base64');
+  const data = JSON.stringify(`{"data": "${encodedName}"}`);
+  childProcess.execSync(`functions call helloPubSub --data ${data}`);
+
+  // Wait for logs to become consistent
+  await new Promise(resolve => setTimeout(resolve, 1000));
 
   // Check the emulator's logs
   const logs = childProcess
     .execSync(`functions logs read helloPubSub --start-time ${startTime}`)
     .toString();
-  t.true(logs.includes(`Hello, ${name}!`));
+  assert.strictEqual(logs.includes(`Hello, ${name}!`), true);
 });
 
-test.serial(`helloPubSub: should print hello world`, async t => {
-  t.plan(1);
+it('helloPubSub: should print hello world', async () => {
   const startTime = new Date(Date.now()).toISOString();
 
   // Mock Pub/Sub call, as the emulator doesn't listen to Pub/Sub topics
-  childProcess.execSync(`functions call helloPubSub --data {}`);
+  childProcess.execSync('functions call helloPubSub --data {}');
+
+  // Wait for logs to become consistent
+  await new Promise(resolve => setTimeout(resolve, 1000));
 
   // Check the emulator's logs
   const logs = childProcess
     .execSync(`functions logs read helloPubSub --start-time ${startTime}`)
     .toString();
-  t.true(logs.includes(`Hello, World!`));
+  assert.strictEqual(logs.includes('Hello, World!'), true);
 });
 // [END functions_pubsub_integration_test]
