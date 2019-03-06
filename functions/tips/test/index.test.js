@@ -15,18 +15,18 @@
 
 'use strict';
 
-const sinon = require(`sinon`);
-const test = require(`ava`);
-const tools = require(`@google-cloud/nodejs-repo-tools`);
+const sinon = require('sinon');
+const assert = require('assert');
+const tools = require('@google-cloud/nodejs-repo-tools');
 
-const sample = require(`../`);
+const sample = require('../');
 
-test.beforeEach(tools.stubConsole);
-test.afterEach.always(tools.restoreConsole);
+beforeEach(tools.stubConsole);
+afterEach(tools.restoreConsole);
 
-test(`should demonstrate retry behavior for a promise`, async t => {
+it('should demonstrate retry behavior for a promise', async () => {
   // Retry by throwing an error
-  t.throws(() => {
+  assert.throws(() => {
     sample.retryPromise({
       data: {
         retry: true,
@@ -35,10 +35,15 @@ test(`should demonstrate retry behavior for a promise`, async t => {
   }, 'Retrying...');
 
   // Terminate by returning a rejected promise
-  await t.throws(sample.retryPromise({data: {}}), 'Not retrying...');
+  const error = new Error('Not retrying...');
+  try {
+    await sample.retryPromise({data: {}});
+  } catch (err) {
+    assert.deepStrictEqual(err, error);
+  }
 });
 
-test(`should demonstrate retry behavior for a callback`, t => {
+it('should demonstrate retry behavior for a callback', () => {
   const cb = sinon.stub();
   const err = new Error('Error!');
 
@@ -51,14 +56,14 @@ test(`should demonstrate retry behavior for a callback`, t => {
     },
     cb
   );
-  t.deepEqual(cb.firstCall.args, [err]);
+  assert.deepStrictEqual(cb.firstCall.args, [err]);
 
   // Terminate by passing nothing to the callback
   sample.retryCallback({data: {}}, cb);
-  t.deepEqual(cb.secondCall.args, []);
+  assert.deepStrictEqual(cb.secondCall.args, []);
 });
 
-test(`should call a GCP API`, async t => {
+it('should call a GCP API', async () => {
   const reqMock = {
     body: {
       topic: process.env.FUNCTIONS_TOPIC,
@@ -74,8 +79,8 @@ test(`should call a GCP API`, async t => {
 
   // Instead of modifying the sample to return a promise,
   // use a delay here and keep the sample idiomatic
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise(resolve => setTimeout(resolve, 2000));
 
-  t.true(resMock.status.calledOnce);
-  t.true(resMock.status.calledWith(200));
+  assert.strictEqual(resMock.status.calledOnce, true);
+  assert.strictEqual(resMock.status.calledWith(200), true);
 });
